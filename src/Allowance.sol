@@ -9,11 +9,7 @@ contract Allowance {
     address private owner;
 
     // Constructor to initialize the contract with the recipients and weekly amount
-    constructor(
-        address[] memory _children,
-        uint256 _amount,
-        uint256 _frequency
-    ) {
+    constructor(address[] memory _children, uint256 _amount, uint256 _frequency) {
         owner = msg.sender;
         children = _children;
         amount = _amount;
@@ -34,20 +30,14 @@ contract Allowance {
 
     // Modifier to check if a week has passed
     modifier timePassed() {
-        require(
-            block.timestamp >= lastPaymentTime + frequency,
-            "Allowance not yet available"
-        );
+        require(block.timestamp >= lastPaymentTime + frequency, "Allowance not yet available");
         _;
     }
 
     // Function to release Ether to the children if a week has passed
     function releaseAllowance() external timePassed {
         uint256 totalAmount = amount * children.length;
-        require(
-            address(this).balance >= totalAmount,
-            "Insufficient contract balance"
-        );
+        require(address(this).balance >= totalAmount, "Insufficient contract balance");
 
         for (uint256 i = 0; i < children.length; i++) {
             payable(children[i]).transfer(amount);
